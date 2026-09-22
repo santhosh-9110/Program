@@ -1,0 +1,86 @@
+7. Writing a program to create two threads: one to print even numbers and the other to print odd numbers within a given range, ensuring proper synchronization.
+class NumberPrinter {
+    private int number = 1;
+    private int limit;
+
+    NumberPrinter(int limit) {
+        this.limit = limit;
+    }
+
+    synchronized void printOdd() {
+        while (number <= limit) {
+
+            while (number <= limit && number % 2 == 0) {
+                try {
+                    wait();
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    return;
+                }
+            }
+
+            if (number <= limit) {
+                System.out.println("Odd Thread: " + number);
+                number++;
+                notifyAll();
+            }
+        }
+    }
+
+    synchronized void printEven() {
+        while (number <= limit) {
+
+            while (number <= limit && number % 2 != 0) {
+                try {
+                    wait();
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    return;
+                }
+            }
+
+            if (number <= limit) {
+                System.out.println("Even Thread: " + number);
+                number++;
+                notifyAll();
+            }
+        }
+    }
+}
+
+class OddThread extends Thread {
+    private NumberPrinter printer;
+
+    OddThread(NumberPrinter printer) {
+        this.printer = printer;
+    }
+
+    public void run() {
+        printer.printOdd();
+    }
+}
+
+class EvenThread extends Thread {
+    private NumberPrinter printer;
+
+    EvenThread(NumberPrinter printer) {
+        this.printer = printer;
+    }
+
+    public void run() {
+        printer.printEven();
+    }
+}
+
+public class EvenOddThreads {
+    public static void main(String[] args) {
+
+        NumberPrinter printer = new NumberPrinter(20);
+
+        OddThread oddThread = new OddThread(printer);
+        EvenThread evenThread = new EvenThread(printer);
+
+        oddThread.start();
+        evenThread.start();
+    }
+}
