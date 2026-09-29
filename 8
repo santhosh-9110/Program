@@ -1,0 +1,160 @@
+Writing a Java program to implement mouse events using a Frame. The program should detect and display messages for mouse actions such as clicking, pressing, releasing, entering, and exiting the frame.
+
+import java.awt.*;
+import java.awt.event.*;
+
+public class MouseMove extends Frame implements MouseListener {
+
+    Label L;
+
+    MouseMove() {
+
+        setLayout(null);
+
+        L = new Label("My First Frame");
+        L.setBounds(100, 150, 120, 40);
+        add(L);
+
+        addMouseListener(this);
+        addWindowListener(new MyWindowAdapter());
+
+        setSize(300, 300);
+        setBackground(Color.BLUE);
+        setVisible(true);
+    }
+
+    public void mouseClicked(MouseEvent me) {
+        L.setText("Mouse Clicked");
+    }
+
+    public void mouseEntered(MouseEvent me) {
+        L.setText("Mouse Entered");
+    }
+
+    public void mouseExited(MouseEvent me) {
+        L.setText("Mouse Exited");
+    }
+
+    public void mousePressed(MouseEvent me) {
+        L.setText("Mouse Pressed");
+    }
+
+    public void mouseReleased(MouseEvent me) {
+        L.setText("Mouse Released");
+    }
+
+    public static void main(String[] args) {
+        new MouseMove();
+    }
+}
+
+class MyWindowAdapter extends WindowAdapter {
+
+    public void windowClosing(WindowEvent we) {
+        System.exit(0);
+    }
+}
+
+9. Writing a program to create a Frame with a checkbox group containing five checkboxes labeled Red, Green, Blue, Yellow, and White. The background color of the frame should change based on the selected checkbox and update every 2 seconds.
+
+
+
+import java.awt.*;
+import java.awt.event.*;
+
+public class CheckboxFrame extends Frame implements ItemListener {
+
+    Checkbox red, green, blue, yellow, white;
+    CheckboxGroup cbg;
+
+    public CheckboxFrame() {
+
+        addWindowListener(new MyWindowAdapter());
+
+        cbg = new CheckboxGroup();
+
+        red = new Checkbox("Red", cbg, false);
+        green = new Checkbox("Green", cbg, false);
+        blue = new Checkbox("Blue", cbg, false);
+        yellow = new Checkbox("Yellow", cbg, false);
+        white = new Checkbox("White", cbg, true);
+
+        red.addItemListener(this);
+        green.addItemListener(this);
+        blue.addItemListener(this);
+        yellow.addItemListener(this);
+        white.addItemListener(this);
+
+        add(red);
+        add(green);
+        add(blue);
+        add(yellow);
+        add(white);
+
+        setSize(300, 200);
+        setTitle("Checkbox Color Frame");
+        setLayout(new FlowLayout());
+        setVisible(true);
+
+        Thread t = new Thread() {
+            public void run() {
+                while (true) {
+                    updateColor();
+
+                    try {
+                        Thread.sleep(2000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        };
+
+        t.start();
+    }
+
+    public void updateColor() {
+
+        String sel = cbg.getSelectedCheckbox().getLabel();
+
+        switch (sel) {
+
+            case "Red":
+                setBackground(Color.RED);
+                break;
+
+            case "Green":
+                setBackground(Color.GREEN);
+                break;
+
+            case "Blue":
+                setBackground(Color.BLUE);
+                break;
+
+            case "Yellow":
+                setBackground(Color.YELLOW);
+                break;
+
+            case "White":
+                setBackground(Color.WHITE);
+                break;
+        }
+
+        repaint();
+    }
+
+    public void itemStateChanged(ItemEvent ie) {
+        // Background is updated every 2 seconds by the thread
+    }
+
+    public static void main(String args[]) {
+        new CheckboxFrame();
+    }
+}
+
+class MyWindowAdapter extends WindowAdapter {
+
+    public void windowClosing(WindowEvent we) {
+        System.exit(0);
+    }
+}e
